@@ -12,12 +12,16 @@ fn main() {
     let mut stdout = stdout().into_raw_mode().unwrap();
     write!(stdout, "{}", clear::All).unwrap();
     write!(stdout, "{}", cursor::Goto(1, 1));
-    write!(stdout, "Hello World!");
     stdout.flush().unwrap();
 
     for evt in stdin.events() {
-        if evt.unwrap() == Event::Key(Key::Ctrl('c')) {
-            return;
+        match evt.unwrap() {
+            Event::Key(Key::Ctrl('c')) => break,
+            Event::Key(Key::Char(x)) => {
+                write!(stdout, "{}", x);
+                stdout.flush().unwrap();
+            },
+            _ => break,
         }
     }
 }
